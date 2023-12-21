@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+    nginx:
+        container_name: nginx
+        build:
+            context: ./nginxConfig
+            dockerfile: Dockerfile
+        networks:
+            - complai-networks
+        ports:
+            - "80:80"
+
+    client:
+        container_name: client
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        networks:
+            - complai-networks
+        volumes:
+            - ../client/public:/client/public:cached
+            - ../client/src:/client/src:cached
+        env_file: [./.env]
+        depends_on: ["nginx"]
+
+networks:
+    complai-networks:
